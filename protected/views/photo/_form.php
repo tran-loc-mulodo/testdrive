@@ -1,0 +1,76 @@
+<?php
+/* @var $this PhotoController */
+/* @var $model Photo */
+/* @var $form CActiveForm */
+?>
+
+<div class="form">
+
+<?php $form=$this->beginWidget('CActiveForm', array(
+	'id'=>'photo-form',
+	// Please note: When you enable ajax validation, make sure the corresponding
+	// controller action is handling ajax validation correctly.
+	// There is a call to performAjaxValidation() commented in generated controller code.
+	// See class documentation of CActiveForm for details on this.
+	'enableAjaxValidation'=>false,
+)); ?>
+
+	<p class="note">Fields with <span class="required">*</span> are required.</p>
+
+	<?php echo $form->errorSummary($model); ?>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'album_id'); ?>
+		<?php echo $form->textField($model,'album_id'); ?>
+		<?php echo $form->error($model,'album_id'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'filename'); ?>
+		<?php echo $form->textField($model,'filename',array('size'=>60,'maxlength'=>100)); ?>
+		<?php echo $form->error($model,'filename'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'caption'); ?>
+		<?php echo $form->textField($model,'caption',array('size'=>60,'maxlength'=>100)); ?>
+		<?php echo $form->error($model,'caption'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'alt_text'); ?>
+		<?php echo $form->textField($model,'alt_text',array('size'=>60,'maxlength'=>100)); ?>
+		<?php echo $form->error($model,'alt_text'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'tags'); ?>
+		<?php echo $form->textField($model,'tags',array('size'=>60,'maxlength'=>100)); ?>
+		<?php echo $form->error($model,'tags'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'sort_order'); ?>
+		<?php echo $form->textField($model,'sort_order'); ?>
+		<?php echo $form->error($model,'sort_order'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'created_dt'); ?>
+		<?php echo $form->textField($model,'created_dt'); ?>
+		<?php echo $form->error($model,'created_dt'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'lastupdate_dt'); ?>
+		<?php echo $form->textField($model,'lastupdate_dt'); ?>
+		<?php echo $form->error($model,'lastupdate_dt'); ?>
+	</div>
+
+	<div class="row buttons">
+		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+	</div>
+
+<?php $this->endWidget(); ?>
+
+</div><!-- form -->
