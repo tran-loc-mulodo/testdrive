@@ -88,13 +88,52 @@ class OrderController extends Controller
             if (!YII_DEBUG && !Yii::app()->request->isAjaxRequest) {
                 throw new CHttpException('403', 'Forbidden access.');
             }
-            if (empty($_GET['term'])) {
+            if (empty($_GET['term_id'])) {
                 throw new CHttpException('404', 'Missing "term" GET parameter.');
             }
-            $term = $_GET['term'];
-//            Yii::app()->cache->set("test1153", "dang test cache", 60);
-            header('Content-Type: application/json; charset="UTF-8"');
-            echo json_encode("ok");
+            $product_before = Yii::app()->cache->get("test1153");
+            $term_id = $_GET['term_id'];
+            $term_name = $_GET['term_name'];
+            $term_qty = $_GET['term_qty'];
+            $flg = FALSE;
+            $model=new OrderDetail;
+            $model->id = $term_id;
+            $model->name = $term_name;
+            $model->quality = $term_qty;
+            if(!empty($product_before))
+            {
+                foreach ($product_before as $struct) {
+                    if($struct->id == $term_id){
+                        $struct->quality += $term_qty;
+                        $flg = TRUE;
+                    }
+                }
+                if($flg){
+                    $persons = $product_before;
+                }else $persons = array_merge($product_before, array($model));;
+                
+            }  else {
+                $persons = array($model);
+            }
+//            
+            Yii::app()->cache->set("test1153", $persons, 60);
+            $gridDataProvider = new CArrayDataProvider($persons);
+            return $this->widget('bootstrap.widgets.TbGridView',array(
+                'id'=>'order-grid',
+                'dataProvider'=>$gridDataProvider,
+                'columns'=>array(
+                                'id',
+                                'name',
+                                'quality',
+                array(
+                'class'=>'bootstrap.widgets.TbButtonColumn',
+                ),
+                ),
+                ));
+            
+            
+//            header('Content-Type: application/json; charset="UTF-8"');
+//            echo json_encode($model);
             Yii::app()->end();
         }
 	/**

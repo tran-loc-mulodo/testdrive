@@ -18,7 +18,7 @@ return array(
 		'application.models.*',
 		'application.components.*',
 	),
-        'theme'=>'bootstrap', //'bootstrap',
+        'theme'=>'blackboot', //'bootstrap',
 	'modules'=>array(
 		// uncomment the following to enable the Gii tool
 		

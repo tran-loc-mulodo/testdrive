@@ -9,6 +9,7 @@ $this->breadcrumbs=array(
 
 $this->menu=array(
 	array('label'=>'List Order', 'url'=>array('index')),
+        array('label'=>'Sale', 'url'=>array('sale')),
 	array('label'=>'Create Order', 'url'=>array('create')),
 	array('label'=>'Update Order', 'url'=>array('update', 'id'=>$model->id)),
 	array('label'=>'Delete Order', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),

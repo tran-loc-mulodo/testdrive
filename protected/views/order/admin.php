@@ -9,6 +9,7 @@ $this->breadcrumbs=array(
 
 $this->menu=array(
 	array('label'=>'List Order', 'url'=>array('index')),
+        array('label'=>'Sale', 'url'=>array('sale')),
 	array('label'=>'Create Order', 'url'=>array('create')),
 );
 
@@ -61,6 +62,8 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 //		),
 //	),
 //)); 
+$a = array(array('id' =>1 , 'owner_id' => 3 , 'status' => 1 ,'total_price' => 2 ),array('id' =>2 , 'owner_id' => '3' , 'status' => 0 ,'total_price' => 13 ));
+$gridDataProvider = new CArrayDataProvider($a);
 $this->widget(
     'bootstrap.widgets.TbExtendedGridView',
     array(
@@ -74,8 +77,6 @@ $this->widget(
         'columns' => array(
 		'id',
 		'owner_id',
-		'created_date',
-		'modified_date',
 		'status',
 		'total_price',
 		/*

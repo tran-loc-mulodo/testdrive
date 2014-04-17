@@ -1,10 +1,3 @@
-<script>
-$(document).ready(function(){
-  var addFunction = function () {
-   alert('ok')
-};
-});
-</script>
 <?php
 /* @var $this OrderController */
 /* @var $dataProvider CActiveDataProvider */
@@ -71,8 +64,8 @@ $this->menu=array(
             'theme' => 'facebook',
             'onAdd' => 'js:function(item){ $.ajax({
                     url: "index.php?r=order/addproduct",
-                    data: { "term": item.id },
-                    success: function(data) { alert(data); }
+                    data: { "term_id": item.id , "term_name": item.name , "term_qty": 1 },
+                    success: function(data) { $("#order-grid").html(data);$(".token-input-token-facebook").remove(); }
                 });
         }',
         )
@@ -81,7 +74,7 @@ $this->menu=array(
 	
 	</div>
         
-        <div id="tb-gird">
+        <div id="order-grid" class="grid-view">
             
         </div>
 
