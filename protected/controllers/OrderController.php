@@ -28,7 +28,7 @@ class OrderController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view' , 'sale' , 'ajax' , 'addproduct'),
+				'actions'=>array('index','view' , 'sale' , 'ajax' , 'addproduct' , 'deleteproduct'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -67,14 +67,14 @@ class OrderController extends Controller
                 $cursor = Yii::app()->db->createCommand()
                 ->select('*')
                 ->from('tbl_product')
-                ->where(array('like', 'product_name', '%'.$term.'%'))        
+                ->where(array('like', 'product_name' , '%'.$term.'%'))        
                 ->queryAll();
                 
                 if (!empty($cursor) ) //(!empty($cursor) && $cursor->count())
                 {
                     foreach ($cursor as $id => $value)
                     {
-                        $result[] = array('id' => $value['id'], 'name' => $value['product_name']);
+                        $result[] = array('id' => $value['id'], 'name' => $value['product_name'] , 'price' => $value['price_sale']);
                     }
                 }
             }
@@ -95,16 +95,19 @@ class OrderController extends Controller
             $term_id = $_GET['term_id'];
             $term_name = $_GET['term_name'];
             $term_qty = $_GET['term_qty'];
+            $term_price = $_GET['term_price'];
             $flg = FALSE;
             $model=new OrderDetail;
             $model->id = $term_id;
             $model->name = $term_name;
             $model->quality = $term_qty;
+            $model->price = $term_price;
             if(!empty($product_before))
             {
                 foreach ($product_before as $struct) {
                     if($struct->id == $term_id){
                         $struct->quality += $term_qty;
+                        $struct->price *= $struct->quality;
                         $flg = TRUE;
                     }
                 }
@@ -120,22 +123,97 @@ class OrderController extends Controller
             $gridDataProvider = new CArrayDataProvider($persons);
             return $this->widget('bootstrap.widgets.TbGridView',array(
                 'id'=>'order-grid',
+                'type'=>'striped bordered',
+                'template' => "{items}",
                 'dataProvider'=>$gridDataProvider,
-                'columns'=>array(
-                                'id',
-                                'name',
-                                'quality',
-                array(
-                'class'=>'bootstrap.widgets.TbButtonColumn',
-                ),
+                'columns' =>array(
+                    array('name'=>'name', 'header'=>'Name' ),
+                    array(
+                        'name'=>'quality',
+                        'header'=>'So luong',
+                        'footer'=>'Total Price',
+                        'footerHtmlOptions'=>array('style'=>'font-weight: bold')
+                    ),
+                     array('name'=>'price', 
+                            'header'=>'Gia',
+                            'class'=>'bootstrap.widgets.TbTotalSumColumn',
+                            'footerHtmlOptions'=>array('style'=>'font-weight: bold')
+                            
+                         ),
+                    array(
+                        'htmlOptions' => array('nowrap'=>'nowrap'),
+                        'class'=>'bootstrap.widgets.TbButtonColumn',
+                        'template'=>'{delete}',
+                        'buttons'=>array(            
+                            'delete' => array(
+                              'label'=>'Terminar sesión',
+                            ),
+                          ),
+//                        'viewButtonUrl'=>'',
+//                        'updateButtonUrl'=>null,
+//                        'deleteButtonUrl'=>null,
+                        'deleteConfirmation'=>'Está seguro que desea terminar la sesión seleccionada?',
+                        'deleteButtonUrl'=>'Yii::app()->createUrl("order/deleteproduct", array("id"=>$data->id))',
+                    ),
                 ),
                 ));
             
-            
-//            header('Content-Type: application/json; charset="UTF-8"');
-//            echo json_encode($model);
             Yii::app()->end();
         }
+        
+        public function actionDeleteproduct($id)
+	{
+		$product_before = Yii::app()->cache->get("test1153");
+                if(!empty($product_before))
+                {
+                    foreach ($product_before as $index => $struct) {
+                        if($struct->id == $id){
+                            unset($struct[$index]);
+                            
+                        }
+                    }
+                }
+		Yii::app()->cache->set("test1153", $product_before, 60);
+            $gridDataProvider = new CArrayDataProvider($product_before);
+            return $this->widget('bootstrap.widgets.TbGridView',array(
+                'id'=>'order-grid',
+                'type'=>'striped bordered',
+                'template' => "{items}",
+                'dataProvider'=>$gridDataProvider,
+                'columns' =>array(
+                    array('name'=>'name', 'header'=>'Name' ),
+                    array(
+                        'name'=>'quality',
+                        'header'=>'So luong',
+                        'footer'=>'Total Price',
+                        'footerHtmlOptions'=>array('style'=>'font-weight: bold')
+                    ),
+                     array('name'=>'price', 
+                            'header'=>'Gia',
+                            'class'=>'bootstrap.widgets.TbTotalSumColumn',
+                            'footerHtmlOptions'=>array('style'=>'font-weight: bold')
+                            
+                         ),
+                    array(
+                        'htmlOptions' => array('nowrap'=>'nowrap'),
+                        'class'=>'bootstrap.widgets.TbButtonColumn',
+                        'template'=>'{delete}',
+                        'buttons'=>array(            
+                            'delete' => array(
+                              'label'=>'Terminar sesión',
+                            ),
+                          ),
+//                        'viewButtonUrl'=>'',
+//                        'updateButtonUrl'=>null,
+//                        'deleteButtonUrl'=>null,
+                        'deleteConfirmation'=>'Está seguro que desea terminar la sesión seleccionada?',
+                        'deleteButtonUrl'=>'Yii::app()->createUrl("order/deleteproduct", array("id"=>$data->id))',
+                    ),
+                ),
+                ));
+            
+            Yii::app()->end();
+	}
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.

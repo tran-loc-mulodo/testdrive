@@ -64,7 +64,7 @@ $this->menu=array(
             'theme' => 'facebook',
             'onAdd' => 'js:function(item){ $.ajax({
                     url: "index.php?r=order/addproduct",
-                    data: { "term_id": item.id , "term_name": item.name , "term_qty": 1 },
+                    data: { "term_id": item.id , "term_name": item.name  , "term_qty": 1 , "term_price": item.price },
                     success: function(data) { $("#order-grid").html(data);$(".token-input-token-facebook").remove(); }
                 });
         }',
