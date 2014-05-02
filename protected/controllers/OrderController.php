@@ -28,7 +28,7 @@ class OrderController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view' , 'sale' , 'ajax' , 'addproduct' , 'deleteproduct'),
+				'actions'=>array('index','view' , 'sale' , 'ajax' , 'addproduct' , 'deleteproduct' , 'buy'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -164,15 +164,17 @@ class OrderController extends Controller
         public function actionDeleteproduct($id)
 	{
 		$product_before = Yii::app()->cache->get("test1153");
+//                print_r($product_before);
                 if(!empty($product_before))
                 {
                     foreach ($product_before as $index => $struct) {
                         if($struct->id == $id){
-                            unset($struct[$index]);
+                            unset($product_before[$index]);
                             
                         }
                     }
                 }
+//                print_r($struct);die;
 		Yii::app()->cache->set("test1153", $product_before, 60);
             $gridDataProvider = new CArrayDataProvider($product_before);
             return $this->widget('bootstrap.widgets.TbGridView',array(
@@ -211,10 +213,33 @@ class OrderController extends Controller
                     ),
                 ),
                 ));
-            
-            Yii::app()->end();
+             
+             Yii::app()->end();
 	}
-	/**
+        
+        public function actionBuy() {
+            $data = Yii::app()->cache->get("test1153");
+//            print_r($data);
+            $order = new Order;
+            $order->owner_id = 7;
+            $order->save();
+            $order_id = $order->primaryKey;
+            
+            //save data to order detail
+            $order_detail = new OrderDetail;
+            foreach ($data as $param_data) {
+                $order_detail->setIsNewRecord(true);
+                $order_detail->id = $param_data->id;
+                $order_detail->name = $param_data->name;
+                $order_detail->order_id = $order_id;
+                $order_detail->price = $param_data->price;
+                $order_detail->quality = $param_data->quality;
+                $order_detail->save();
+            }
+            Yii::app()->cache->set("test1153", NULL);
+            $this->redirect(array('sale'));
+        }
+        /**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
