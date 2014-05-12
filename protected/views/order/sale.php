@@ -38,23 +38,23 @@ $this->menu=array(
 
 <div class="form">
 
-<?php $form=$this->beginWidget('CActiveForm', array(
+<?php /*$form=$this->beginWidget('CActiveForm', array(
 	'id'=>'sale-form',
 	// Please note: When you enable ajax validation, make sure the corresponding
 	// controller action is handling ajax validation correctly.
 	// There is a call to performAjaxValidation() commented in generated controller code.
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>true,
-        'action' => Yii::app()->createAbsoluteUrl('/order/buy'),
-)); ?>
+        'action' => Yii::app()->createAbsoluteUrl('/order/sale'),
+)); */?>
 
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
-	<?php echo $form->errorSummary($model); ?>
+	<?php //echo $form->errorSummary($model); ?>
 
 	<div class="row">
 		
-	<?php $this->widget('ext.tokeninput.TokenInput', array(
+	<?php  /*$this->widget('ext.tokeninput.TokenInput', array(
         'model' => $model,
         'attribute' => 'product_name',
         'url' => array('order/ajax'),
@@ -64,18 +64,32 @@ $this->menu=array(
             'resultsFormatter' => 'js:function(item){ return "<li><p>" + item.name + "</p></li>" }',
             'theme' => 'facebook',
             'onAdd' => 'js:function(item){ $.ajax({
-                    url: "index.php?r=order/addproduct",
-                    data: { "term_id": item.id , "term_name": item.name  , "term_qty": 1 , "term_price": item.price },
+                    url: "index.php?a: { "term_id": item.id , "term_name": item.name  , "term_qty": 1 , "term_price": item.price , "term_paid": item.paid },
+                    success: function(data) { $("#order-grid").html(data);$(".token-input-token-facebook").remove(); }
+                });r=order/addproduct",
+                    data: { "term_id": item.id , "term_name": item.name  , "term_qty": 1 , "term_price": item.price , "term_paid": item.paid },
                     success: function(data) { $("#order-grid").html(data);$(".token-input-token-facebook").remove(); }
                 });
         }',
         )
-        )); 
+        )); */
         ?>
-	
+	<div class="row">
+            <label for="Product_Số_Lượng">Số Lượng</label>
+            <input id="Product_initials" type="text" name="Product[initials]">
+            <input id="Product_barcode" type="text" maxlength="50" name="Product[barcode]">
+	</div>
 	</div>
         
-        <div id="order-grid" class="grid-view">
+        
+
+	<div class="row buttons">
+		<?php //echo CHtml::submitButton('Nhập'); ?>
+	</div>
+
+<?php //$this->endWidget(); ?>
+               
+<div id="order-grid" class="grid-view">
         <?php
             $data_array = Yii::app()->cache->get("test1153");
             
@@ -86,7 +100,7 @@ $this->menu=array(
             $gridDataProvider = new CArrayDataProvider($data_array);
             
             $this->widget('bootstrap.widgets.TbGridView',array(
-                'id'=>'order-grid',
+                'id'=>'order-index-grid',
                 'type'=>'striped bordered',
                 'template' => "{items}",
                 'dataProvider'=>$gridDataProvider,
@@ -126,30 +140,20 @@ $this->menu=array(
         </div>
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+		<?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>
 
-<?php $this->endWidget(); ?>
+<?php //$this->endWidget(); ?>
 
-<?php 
-    
+                    <?php 
+    //echo CHtml::link('Link Text',array('order/buy'));
 //    Yii::app()->clientScript->registerScript('car-js', $script);
+                    Yii::app()->clientScript->registerScript('sale', "
+$('#Product_initials').change(function(){
+        alert($('#Product_initials').val());
+       
+});
+
+");
 ?>        
 </div><!-- form -->
-<script>
-
-jQuery(document).on('click','#order-grid a.delete',function() {
-    if(!confirm('Are you sure you want to delete this item?')) return false;
-    
-    $.ajax({
-        url: jQuery(this).attr('href'),
-        type: "GET",
-        //data: { id : menuId },
-        dataType: "html",
-        success : function (data) {
-            $("#order-grid").html(data);
-        }
-        });
-    return false;
-}); 
-    </script>

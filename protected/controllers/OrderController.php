@@ -67,14 +67,16 @@ class OrderController extends Controller
                 $cursor = Yii::app()->db->createCommand()
                 ->select('*')
                 ->from('tbl_product')
-                ->where(array('like', 'product_name' , '%'.$term.'%'))        
+//                ->where(array('like', array('product_name','barcode') , '%'.$term.'%'))
+                ->where(array('like', 'barcode' , '%'.$term.'%'))        
                 ->queryAll();
+//        print_r($cursor);
                 
                 if (!empty($cursor) ) //(!empty($cursor) && $cursor->count())
                 {
                     foreach ($cursor as $id => $value)
                     {
-                        $result[] = array('id' => $value['id'], 'name' => $value['product_name'] , 'price' => $value['price_sale']);
+                        $result[] = array('id' => $value['id'], 'name' => $value['product_name'] , 'price' => $value['price_sale'] , 'paid' => $value['price_sale']* 1000 );
                     }
                 }
             }
@@ -84,30 +86,48 @@ class OrderController extends Controller
             Yii::app()->end();
         }
         
-        public function actionAddproduct() {
+        public function actionAddproduct($param) {
             if (!YII_DEBUG && !Yii::app()->request->isAjaxRequest) {
                 throw new CHttpException('403', 'Forbidden access.');
             }
-            if (empty($_GET['term_id'])) {
-                throw new CHttpException('404', 'Missing "term" GET parameter.');
+            if (empty($_POST)) {
+                throw new CHttpException('404', 'Missing "term" POST parameter.');
             }
+            $term = $_POST['Product']['initials'];
+//            print_r($_POST);
             $product_before = Yii::app()->cache->get("test1153");
-            $term_id = $_GET['term_id'];
-            $term_name = $_GET['term_name'];
-            $term_qty = $_GET['term_qty'];
-            $term_price = $_GET['term_price'];
+            $cursor = Yii::app()->db->createCommand()
+                ->select('*')
+                ->from('tbl_product')
+//                ->where(array('like', array('product_name','barcode') , '%'.$term.'%'))
+                ->where(array('like', 'barcode' , '%'.$term.'%'))        
+                ->queryAll();
+//        print_r($cursor);
+                
+                if (!empty($cursor) ) //(!empty($cursor) && $cursor->count())
+                {
+                    foreach ($cursor as $id => $value)
+                    {
+                        $result[] = array('id' => $value['id'], 'name' => $value['product_name'] , 'price' => $value['price_sale'] , 'paid' => $value['price_sale']* 1000 );
+                    }
+                }
+            
+//            print_r($result);
+//            print_r($product_before);
+            
             $flg = FALSE;
             $model=new OrderDetail;
-            $model->id = $term_id;
-            $model->name = $term_name;
-            $model->quality = $term_qty;
-            $model->price = $term_price;
+            $model->id = $result[0]['id'];
+            $model->name = $result[0]['name'];
+            $model->quality = 1;
+            $model->price = $result[0]['price'];
+            $model->paid = $result[0]['paid'];
             if(!empty($product_before))
             {
                 foreach ($product_before as $struct) {
-                    if($struct->id == $term_id){
-                        $struct->quality += $term_qty;
-                        $struct->price *= $struct->quality;
+                    if($struct->id == $result[0]['id']){
+                        $struct->quality ++ ;
+                        $struct->paid = $struct->quality * $struct->price;
                         $flg = TRUE;
                     }
                 }
@@ -121,7 +141,9 @@ class OrderController extends Controller
 //            
             Yii::app()->cache->set("test1153", $persons, 60);
             $gridDataProvider = new CArrayDataProvider($persons);
-            return $this->widget('bootstrap.widgets.TbGridView',array(
+//            print_r($gridDataProvider);
+            return $gridDataProvider;
+            /*return $this->widget('bootstrap.widgets.TbGridView',array(
                 'id'=>'order-grid',
                 'type'=>'striped bordered',
                 'template' => "{items}",
@@ -131,11 +153,15 @@ class OrderController extends Controller
                     array(
                         'name'=>'quality',
                         'header'=>'So luong',
-                        'footer'=>'Total Price',
-                        'footerHtmlOptions'=>array('style'=>'font-weight: bold')
                     ),
                      array('name'=>'price', 
-                            'header'=>'Gia',
+                            'header'=>'Giá',
+                            'footer'=>'Total Price',
+                            'footerHtmlOptions'=>array('style'=>'font-weight: bold')
+                            
+                         ),
+                    array('name'=>'paid',
+                            'header'=>'Thành Tiền',
                             'class'=>'bootstrap.widgets.TbTotalSumColumn',
                             'footerHtmlOptions'=>array('style'=>'font-weight: bold')
                             
@@ -150,8 +176,6 @@ class OrderController extends Controller
                             ),
                           ),
 //                        'viewButtonUrl'=>'',
-//                        'updateButtonUrl'=>null,
-//                        'deleteButtonUrl'=>null,
                         'deleteConfirmation'=>'Está seguro que desea terminar la sesión seleccionada?',
                         'deleteButtonUrl'=>'Yii::app()->createUrl("order/deleteproduct", array("id"=>$data->id))',
                     ),
@@ -159,6 +183,7 @@ class OrderController extends Controller
                 ));
             
             Yii::app()->end();
+            */
         }
         
         public function actionDeleteproduct($id)
@@ -224,9 +249,10 @@ class OrderController extends Controller
             $order->owner_id = 7;
             $order->save();
             $order_id = $order->primaryKey;
-            
+//            print_r($data);die;
             //save data to order detail
             $order_detail = new OrderDetail;
+            
             foreach ($data as $param_data) {
                 $order_detail->setIsNewRecord(true);
                 $order_detail->id = $param_data->id;
@@ -234,7 +260,13 @@ class OrderController extends Controller
                 $order_detail->order_id = $order_id;
                 $order_detail->price = $param_data->price;
                 $order_detail->quality = $param_data->quality;
+                $order_detail->paid = $param_data->price * $param_data->quality;
                 $order_detail->save();
+                
+                // update quality for product
+                $product = Product::model()->findByPk($param_data->id);
+                $product->initials -= $param_data->quality;
+                $product->save();
             }
             Yii::app()->cache->set("test1153", NULL);
             $this->redirect(array('sale'));
@@ -305,9 +337,29 @@ class OrderController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Order');
+//		$dataProvider=new CActiveDataProvider('Order');
+                if(!isset($_POST['some_date_jap']))
+                {
+                    $cursor = array();
+                }else
+                {
+                    $term = strtotime($_POST['some_date_jap']);//'2014-05-08';
+                    $term = date ('Y-d-m', $term);
+                    $cursor = Yii::app()->db->createCommand()
+    //                ->select('*')        
+                    ->select( 'o.id , d.name , (d.price)*1000 as price  ,  COUNT(d.quality) as quality , COUNT(d.paid)*1000 as paid' )  //'COUNT(id) as cnt'
+                    ->from('tbl_order o')
+                    ->join('tbl_order_detail d', 'd.order_id=o.id')        
+    //                ->where(array('like', array('product_name','barcode') , '%'.$term.'%'))
+    //                ->where(array('like', 'created_date' , '%'.$term.'%'))
+                    ->group('d.name')        
+                    ->where(array('like', 'created_date' , '%'.$term.'%'))      
+                    ->queryAll();
+                }
+                
+//        print_r($cursor);die;
 		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
+			'dataProvider'=>$cursor,
 		));
 	}
         
@@ -317,6 +369,10 @@ class OrderController extends Controller
 	public function actionSale()
 	{
                 $model=new Product;
+                if($_POST)
+                {
+                    $this->actionAddproduct( $_POST);
+                }
                 $this->performAjaxValidation($model);
                 $this->render('sale',array(
 			'model'=>$model,

@@ -9,6 +9,7 @@
  * @property string $name
  * @property double $price
  * @property integer $quality
+ * @property double $paid
  */
 class OrderDetail extends CActiveRecord
 {
@@ -60,6 +61,7 @@ class OrderDetail extends CActiveRecord
 			'name' => 'Name',
 			'price' => 'Price',
 			'quality' => 'Quality',
+                        'paid'    => 'Paid'
 		);
 	}
 
