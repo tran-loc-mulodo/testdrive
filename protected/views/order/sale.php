@@ -150,8 +150,12 @@ $this->menu=array(
 //    Yii::app()->clientScript->registerScript('car-js', $script);
                     Yii::app()->clientScript->registerScript('sale', "
 $('#Product_initials').change(function(){
-        alert($('#Product_initials').val());
-       
+        
+       $.ajax({
+            url: 'index.php?r=order/addproduct',
+            data: { 'term': $('#Product_initials').val() },
+            success: function(data) { response(data); }
+        });
 });
 
 ");
