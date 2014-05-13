@@ -38,15 +38,7 @@ $this->menu=array(
 
 <div class="form">
 
-<?php /*$form=$this->beginWidget('CActiveForm', array(
-	'id'=>'sale-form',
-	// Please note: When you enable ajax validation, make sure the corresponding
-	// controller action is handling ajax validation correctly.
-	// There is a call to performAjaxValidation() commented in generated controller code.
-	// See class documentation of CActiveForm for details on this.
-	'enableAjaxValidation'=>true,
-        'action' => Yii::app()->createAbsoluteUrl('/order/sale'),
-)); */?>
+
 
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
@@ -88,7 +80,15 @@ $this->menu=array(
 	</div>
 
 <?php //$this->endWidget(); ?>
-               
+<?php $form=$this->beginWidget('CActiveForm', array(
+	'id'=>'sale-form',
+	// Please note: When you enable ajax validation, make sure the corresponding
+	// controller action is handling ajax validation correctly.
+	// There is a call to performAjaxValidation() commented in generated controller code.
+	// See class documentation of CActiveForm for details on this.
+	'enableAjaxValidation'=>true,
+        'action' => Yii::app()->createAbsoluteUrl('/order/buy'),
+)); ?>               
 <div id="order-grid" class="grid-view">
         <?php
             $data_array = Yii::app()->cache->get("test1153");
@@ -143,21 +143,60 @@ $this->menu=array(
 		<?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>
 
-<?php //$this->endWidget(); ?>
+<?php $this->endWidget(); ?>
 
                     <?php 
     //echo CHtml::link('Link Text',array('order/buy'));
 //    Yii::app()->clientScript->registerScript('car-js', $script);
                     Yii::app()->clientScript->registerScript('sale', "
 $('#Product_initials').change(function(){
-        
+       if($('#Product_initials').val().length >= 3){ 
        $.ajax({
             url: 'index.php?r=order/addproduct',
-            data: { 'term': $('#Product_initials').val() },
-            success: function(data) { response(data); }
+            type: 'POST',
+            dataType: 'html',
+            data: { 'term': $('#Product_initials').val(), 'barcode': $('#Product_barcode').val() },
+            success: function(data) { 
+                $('#order-grid').html(data);
+                $('#Product_initials').val('');
+                $('#Product_barcode').val('');
+                $( '#Product_initials' ).focus();}
         });
+        }
 });
 
+$('#Product_barcode').change(function(){
+       
+       $.ajax({
+            url: 'index.php?r=order/addproduct',
+            type: 'POST',
+            dataType: 'html',
+            data: { 'term': $('#Product_initials').val(), 'barcode': $('#Product_barcode').val() },
+            success: function(data) { 
+                $('#order-grid').html(data);
+                $('#Product_initials').val('');
+                $('#Product_barcode').val('');
+                $( '#Product_initials' ).focus();}
+        });
+        
+});
+
+$(document).keypress(function(e) {
+    
+    if(e.which == 32) {
+        $.ajax({
+            url: 'index.php?r=order/buy',
+            type: 'POST',
+            dataType: 'html',
+            data: {  },
+            success: function(data) { 
+                $('#order-grid').html('');
+                $('#Product_initials').val('');
+                $('#Product_barcode').val('');
+                $( '#Product_initials' ).focus();}
+        });
+    }
+});
 ");
 ?>        
 </div><!-- form -->

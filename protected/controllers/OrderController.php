@@ -86,15 +86,15 @@ class OrderController extends Controller
             Yii::app()->end();
         }
         
-        public function actionAddproduct($param) {
+        public function actionAddproduct() {
             if (!YII_DEBUG && !Yii::app()->request->isAjaxRequest) {
                 throw new CHttpException('403', 'Forbidden access.');
             }
             if (empty($_POST)) {
                 throw new CHttpException('404', 'Missing "term" POST parameter.');
             }
-            $term = $_POST['Product']['initials'];
-//            print_r($_POST);
+            $term = !empty($_POST['barcode']) ? $_POST['barcode'] : $_POST['term'];
+            $quality = !empty($_POST['barcode']) ? $_POST['term'] : 1;
             $product_before = Yii::app()->cache->get("test1153");
             $cursor = Yii::app()->db->createCommand()
                 ->select('*')
@@ -102,7 +102,6 @@ class OrderController extends Controller
 //                ->where(array('like', array('product_name','barcode') , '%'.$term.'%'))
                 ->where(array('like', 'barcode' , '%'.$term.'%'))        
                 ->queryAll();
-//        print_r($cursor);
                 
                 if (!empty($cursor) ) //(!empty($cursor) && $cursor->count())
                 {
@@ -112,21 +111,21 @@ class OrderController extends Controller
                     }
                 }
             
-//            print_r($result);
+            
 //            print_r($product_before);
             
             $flg = FALSE;
             $model=new OrderDetail;
             $model->id = $result[0]['id'];
             $model->name = $result[0]['name'];
-            $model->quality = 1;
+            $model->quality = $quality;
             $model->price = $result[0]['price'];
             $model->paid = $result[0]['paid'];
             if(!empty($product_before))
             {
                 foreach ($product_before as $struct) {
                     if($struct->id == $result[0]['id']){
-                        $struct->quality ++ ;
+                        $struct->quality += $quality ;
                         $struct->paid = $struct->quality * $struct->price;
                         $flg = TRUE;
                     }
@@ -142,8 +141,8 @@ class OrderController extends Controller
             Yii::app()->cache->set("test1153", $persons, 60);
             $gridDataProvider = new CArrayDataProvider($persons);
 //            print_r($gridDataProvider);
-            return $gridDataProvider;
-            /*return $this->widget('bootstrap.widgets.TbGridView',array(
+//            return $gridDataProvider;
+            return $this->widget('bootstrap.widgets.TbGridView',array(
                 'id'=>'order-grid',
                 'type'=>'striped bordered',
                 'template' => "{items}",
@@ -183,7 +182,7 @@ class OrderController extends Controller
                 ));
             
             Yii::app()->end();
-            */
+            
         }
         
         public function actionDeleteproduct($id)
