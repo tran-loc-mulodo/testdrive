@@ -372,6 +372,7 @@ class OrderController extends Controller
                 {
                     $this->actionAddproduct( $_POST);
                 }
+                
                 $this->performAjaxValidation($model);
                 $this->render('sale',array(
 			'model'=>$model,

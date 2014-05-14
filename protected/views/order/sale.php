@@ -183,7 +183,8 @@ $('#Product_barcode').change(function(){
 
 $(document).keypress(function(e) {
     
-    if(e.which == 32) {
+    if(e.which == 13 && ($('#Product_initials').val() === '')) {
+        
         $.ajax({
             url: 'index.php?r=order/buy',
             type: 'POST',
