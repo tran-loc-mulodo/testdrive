@@ -245,7 +245,7 @@ class OrderController extends Controller
             $data = Yii::app()->cache->get("test1153");
 //            print_r($data);
             $order = new Order;
-            $order->owner_id = 7;
+            $order->owner = Yii::app()->user->id;
             $order->save();
             $order_id = $order->primaryKey;
 //            print_r($data);die;
@@ -342,8 +342,8 @@ class OrderController extends Controller
                     $cursor = array();
                 }else
                 {
-                    $term = strtotime($_POST['some_date_jap']);//'2014-05-08';
-                    $term = date ('Y-d-m', $term);
+                    $date =   new DateTime($_POST['some_date_jap']);
+                    $term = $date->format('Y-d-m');
                     $cursor = Yii::app()->db->createCommand()
     //                ->select('*')        
                     ->select( 'o.id , d.name , (d.price)*1000 as price  ,  COUNT(d.quality) as quality , COUNT(d.paid)*1000 as paid' )  //'COUNT(id) as cnt'

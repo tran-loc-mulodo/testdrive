@@ -5,7 +5,8 @@
  *
  * The followings are the available columns in table 'tbl_order':
  * @property string $id
- * @property integer $owner_id
+ * @property string $owner
+ * @property string $saler
  * @property string $created_date
  * @property string $modified_date
  * @property integer $status
@@ -44,11 +45,11 @@ class Order extends CActiveRecord
 		// will receive user inputs.
 		return array(
 //			array('', 'required'),
-			array('owner_id, status, total_goods, discount', 'numerical', 'integerOnly'=>true),
+			array(' status, total_goods, discount', 'numerical', 'integerOnly'=>true),
 			array('total_price', 'numerical'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, owner_id, status, total_price, total_goods, discount', 'safe', 'on'=>'search'),
+			array('id, owner, status, total_price, total_goods, discount', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -70,7 +71,8 @@ class Order extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'owner_id' => 'Owner',
+			'owner' => 'Owner',
+                        'saler' => 'Saler',
 			'created_date' => 'Created Date',
 			'modified_date' => 'Modified Date',
 			'status' => 'Status',
@@ -99,7 +101,7 @@ class Order extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id,true);
-		$criteria->compare('owner_id',$this->owner_id);
+		$criteria->compare('owner',$this->owner);
 		$criteria->compare('created_date',$this->created_date,true);
 		$criteria->compare('modified_date',$this->modified_date,true);
 		$criteria->compare('status',$this->status);

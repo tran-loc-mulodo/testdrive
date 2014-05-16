@@ -20,10 +20,10 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'owner_id'); ?>
-		<?php echo $form->textField($model,'owner_id'); ?>
+		<?php echo $form->labelEx($model,'owner'); ?>
+		<?php echo $form->textField($model,'owner'); ?>
                
-		<?php echo $form->error($model,'owner_id'); ?>
+		<?php echo $form->error($model,'owner'); ?>
 	</div>
 
 

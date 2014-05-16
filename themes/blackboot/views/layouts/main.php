@@ -1,5 +1,11 @@
 <?php
-	Yii::app()->clientscript
+$curpage = Yii::app()->getController()->getAction()->controller->action->id;
+if(empty(Yii::app()->user->id) && $curpage != 'login'){
+    header('Location: http://localhost/testdrive/index.php?r=site/login');
+//    exit();
+    
+}
+Yii::app()->clientscript
 		// use it when you need it!
 		/*
 		->registerCssFile( Yii::app()->theme->baseUrl . '/css/bootstrap.css' )
@@ -18,6 +24,7 @@
 		->registerScriptFile( Yii::app()->theme->baseUrl . '/js/bootstrap-carousel.js', CClientScript::POS_END )
 		->registerScriptFile( Yii::app()->theme->baseUrl . '/js/bootstrap-typeahead.js', CClientScript::POS_END )
 		*/
+                
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">

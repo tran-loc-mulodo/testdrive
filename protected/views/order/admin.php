@@ -48,7 +48,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 //	'filter'=>$model,
 //	'columns'=>array(
 //		'id',
-//		'owner_id',
+//		'owner',
 //		'created_date',
 //		'modified_date',
 //		'status',
@@ -62,7 +62,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 //		),
 //	),
 //)); 
-$a = array(array('id' =>1 , 'owner_id' => 3 , 'status' => 1 ,'total_price' => 2 ),array('id' =>2 , 'owner_id' => '3' , 'status' => 0 ,'total_price' => 13 ));
+$a = array(array('id' =>1 , 'owner' => 3 , 'status' => 1 ,'total_price' => 2 ),array('id' =>2 , 'owner' => '3' , 'status' => 0 ,'total_price' => 13 ));
 $gridDataProvider = new CArrayDataProvider($a);
 $this->widget(
     'bootstrap.widgets.TbExtendedGridView',
@@ -76,7 +76,7 @@ $this->widget(
         'template' => "{items}",
         'columns' => array(
 		'id',
-		'owner_id',
+		'owner',
 		'status',
 		'total_price',
 		/*
