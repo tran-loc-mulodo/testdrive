@@ -245,7 +245,9 @@ class OrderController extends Controller
             $data = Yii::app()->cache->get("test1153");
 //            print_r($data);
             $order = new Order;
-            $order->owner = Yii::app()->user->id;
+            $order->owner = "Khách lẻ";
+            $order->saler = Yii::app()->user->id;
+            $order->status = _ORDER_STATUS_ENABLE_;
             $order->save();
             $order_id = $order->primaryKey;
 //            print_r($data);die;
@@ -342,8 +344,8 @@ class OrderController extends Controller
                     $cursor = array();
                 }else
                 {
-                    $date =   new DateTime($_POST['some_date_jap']);
-                    $term = $date->format('Y-d-m');
+                    $date = explode('/', $_POST['some_date_jap']);
+                    $term = $date[2].'-'.$date[1].'-'.$date[0];
                     $cursor = Yii::app()->db->createCommand()
     //                ->select('*')        
                     ->select( 'o.id , d.name , (d.price)*1000 as price  ,  COUNT(d.quality) as quality , COUNT(d.paid)*1000 as paid' )  //'COUNT(id) as cnt'
@@ -355,7 +357,7 @@ class OrderController extends Controller
                     ->where(array('like', 'created_date' , '%'.$term.'%'))      
                     ->queryAll();
                 }
-                
+                $term = NULL;
 //        print_r($cursor);die;
 		$this->render('index',array(
 			'dataProvider'=>$cursor,

@@ -18,7 +18,7 @@ $this->menu=array(
 /* @var $dataProvider CActiveDataProvider */
 
 $this->breadcrumbs=array(
-	'Orders',
+	'Bán hàng',
 );
 
 $this->menu=array(
@@ -28,7 +28,7 @@ $this->menu=array(
 );
 ?>
 
-<h1>Sale</h1>
+<h1>Bán Hàng</h1>
 
 <?php
 /* @var $this OrderController */

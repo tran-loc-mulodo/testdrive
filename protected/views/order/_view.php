@@ -29,9 +29,6 @@
 	<?php echo CHtml::encode($data->total_price); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('total_goods')); ?>:</b>
-	<?php echo CHtml::encode($data->total_goods); ?>
-	<br />
 
 	<?php /*
 	<b><?php echo CHtml::encode($data->getAttributeLabel('discount')); ?>:</b>

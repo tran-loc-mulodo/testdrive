@@ -41,10 +41,6 @@
 		<?php echo $form->textField($model,'total_price'); ?>
 	</div>
 
-	<div class="row">
-		<?php echo $form->label($model,'total_goods'); ?>
-		<?php echo $form->textField($model,'total_goods'); ?>
-	</div>
 
 	<div class="row">
 		<?php echo $form->label($model,'discount'); ?>

@@ -1,5 +1,5 @@
 <?php
-
+require_once(__DIR__ . '/../constants/Constants.php');
 // uncomment the following to define a path alias
 // Yii::setPathOfAlias('local','path/to/local-folder');
 Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');

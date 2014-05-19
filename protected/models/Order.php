@@ -10,8 +10,8 @@
  * @property string $created_date
  * @property string $modified_date
  * @property integer $status
+ * @property integer $receive
  * @property double $total_price
- * @property integer $total_goods
  * @property integer $discount
  */
 class Order extends CActiveRecord
@@ -45,11 +45,11 @@ class Order extends CActiveRecord
 		// will receive user inputs.
 		return array(
 //			array('', 'required'),
-			array(' status, total_goods, discount', 'numerical', 'integerOnly'=>true),
+			array(' status, discount', 'numerical', 'integerOnly'=>true),
 			array('total_price', 'numerical'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, owner, status, total_price, total_goods, discount', 'safe', 'on'=>'search'),
+			array('id, owner, status, total_price, discount', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -77,7 +77,6 @@ class Order extends CActiveRecord
 			'modified_date' => 'Modified Date',
 			'status' => 'Status',
 			'total_price' => 'Total Price',
-			'total_goods' => 'Total Goods',
 			'discount' => 'Discount',
 		);
 	}
@@ -106,7 +105,6 @@ class Order extends CActiveRecord
 		$criteria->compare('modified_date',$this->modified_date,true);
 		$criteria->compare('status',$this->status);
 		$criteria->compare('total_price',$this->total_price);
-		$criteria->compare('total_goods',$this->total_goods);
 		$criteria->compare('discount',$this->discount);
 
 		return new CActiveDataProvider($this, array(
