@@ -76,7 +76,7 @@ class OrderController extends Controller
                 {
                     foreach ($cursor as $id => $value)
                     {
-                        $result[] = array('id' => $value['id'], 'name' => $value['product_name'] , 'price' => $value['price_sale'] , 'paid' => $value['price_sale']* 1000 );
+                        $result[] = array('id' => $value['id'], 'name' => $value['product_name'] , 'price' => $value['price_sale'] , 'paid' => $value['price_sale'] );
                     }
                 }
             }
@@ -107,7 +107,7 @@ class OrderController extends Controller
                 {
                     foreach ($cursor as $id => $value)
                     {
-                        $result[] = array('id' => $value['id'], 'name' => $value['product_name'] , 'price' => $value['price_sale'] , 'paid' => $value['price_sale']* 1000 );
+                        $result[] = array('id' => $value['id'], 'name' => $value['product_name'] , 'price' => $value['price_sale']*1000 , 'paid' => $value['price_sale']*1000 * $quality );
                     }
                 }
             
@@ -126,6 +126,7 @@ class OrderController extends Controller
                 foreach ($product_before as $struct) {
                     if($struct->id == $result[0]['id']){
                         $struct->quality += $quality ;
+//                        $struct->price *= 1000; 
                         $struct->paid = $struct->quality * $struct->price;
                         $flg = TRUE;
                     }
@@ -249,6 +250,8 @@ class OrderController extends Controller
             $order->saler = Yii::app()->user->id;
             $order->status = _ORDER_STATUS_ENABLE_;
             $order->save();
+            $total_price = null;
+            
             $order_id = $order->primaryKey;
 //            print_r($data);die;
             //save data to order detail
@@ -262,6 +265,7 @@ class OrderController extends Controller
                 $order_detail->price = $param_data->price;
                 $order_detail->quality = $param_data->quality;
                 $order_detail->paid = $param_data->price * $param_data->quality;
+                $total_price += $order_detail->paid;
                 $order_detail->save();
                 
                 // update quality for product
@@ -269,6 +273,11 @@ class OrderController extends Controller
                 $product->initials -= $param_data->quality;
                 $product->save();
             }
+            
+            //update total price for order
+            $order = Order::model()->findByPk($order_id);
+            $order->total_price = $total_price;
+            $order->save();
             Yii::app()->cache->set("test1153", NULL);
             $this->redirect(array('sale'));
         }
