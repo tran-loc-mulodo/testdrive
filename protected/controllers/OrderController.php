@@ -28,7 +28,7 @@ class OrderController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view' , 'sale' , 'ajax' , 'addproduct' , 'deleteproduct' , 'buy'),
+				'actions'=>array('index','view' , 'sale' , 'ajax' , 'addproduct' , 'deleteproduct' , 'buy' , 'orderschedule'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -99,7 +99,6 @@ class OrderController extends Controller
             $cursor = Yii::app()->db->createCommand()
                 ->select('*')
                 ->from('tbl_product')
-//                ->where(array('like', array('product_name','barcode') , '%'.$term.'%'))
                 ->where(array('like', 'barcode' , '%'.$term.'%'))        
                 ->queryAll();
                 
@@ -110,9 +109,6 @@ class OrderController extends Controller
                         $result[] = array('id' => $value['id'], 'name' => $value['product_name'] , 'price' => $value['price_sale']*1000 , 'paid' => $value['price_sale']*1000 * $quality );
                     }
                 }
-            
-            
-//            print_r($product_before);
             
             $flg = FALSE;
             $model=new OrderDetail;
@@ -139,7 +135,7 @@ class OrderController extends Controller
                 $persons = array($model);
             }
 //            
-            Yii::app()->cache->set("test1153", $persons, 60);
+            Yii::app()->cache->set("test1153", $persons);
             $gridDataProvider = new CArrayDataProvider($persons);
 //            print_r($gridDataProvider);
 //            return $gridDataProvider;
@@ -200,7 +196,7 @@ class OrderController extends Controller
                     }
                 }
 //                print_r($struct);die;
-		Yii::app()->cache->set("test1153", $product_before, 60);
+		Yii::app()->cache->set("test1153", $product_before);
             $gridDataProvider = new CArrayDataProvider($product_before);
             return $this->widget('bootstrap.widgets.TbGridView',array(
                 'id'=>'order-grid',
@@ -390,6 +386,16 @@ class OrderController extends Controller
 		));
                 
 	}
+        
+        /*
+         * Order cake with schedule
+         */
+        public function actionOrderschedule() {
+            $model = new Order;
+            $this->render('schedule',array(
+			'model'=>$model,
+		));
+        }
 
 	/**
 	 * Manages all models.

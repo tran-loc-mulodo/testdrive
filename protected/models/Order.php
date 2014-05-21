@@ -10,9 +10,12 @@
  * @property string $created_date
  * @property string $modified_date
  * @property integer $status
- * @property integer $receive
  * @property double $total_price
  * @property integer $discount
+ * @property double $deposit
+ * @property integer $receive
+ * @property string $description
+ * @property string $date_receive
  */
 class Order extends CActiveRecord
 {

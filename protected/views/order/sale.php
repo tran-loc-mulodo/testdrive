@@ -38,11 +38,7 @@ $this->menu=array(
 
 <div class="form">
 
-
-
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
-
-	<?php //echo $form->errorSummary($model); ?>
+        <?php //echo $form->errorSummary($model); ?>
 
 	<div class="row">
 		
@@ -67,7 +63,6 @@ $this->menu=array(
         )); */
         ?>
 	<div class="row">
-            <label for="Product_Số_Lượng">Số Lượng</label>
             <input id="Product_initials" type="text" name="Product[initials]">
             <input id="Product_barcode" type="text" maxlength="50" name="Product[barcode]">
 	</div>
@@ -146,7 +141,7 @@ $this->menu=array(
 <?php $this->endWidget(); ?>
 
                     <?php 
-    //echo CHtml::link('Link Text',array('order/buy'));
+    echo CHtml::link('Đặt Hàng',array('order/orderschedule'));
 //    Yii::app()->clientScript->registerScript('car-js', $script);
                     Yii::app()->clientScript->registerScript('sale', "
 $('#Product_initials').change(function(){
